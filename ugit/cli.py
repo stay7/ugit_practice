@@ -1,4 +1,7 @@
 import argparse
+import os
+
+from . import data
 
 
 def main():
@@ -16,5 +19,7 @@ def parse_args():
     return parser.parse_args()
 
 
+# empty repository를 만드는 argument
 def init(args):
-    print("Hello World!")
+    data.init()
+    print(f"ugit repository가 {os.getcwd()}/{data.GIT_DIR}")
