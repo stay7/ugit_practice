@@ -19,7 +19,9 @@ def hash_object(data, type_="blob"):
     return oid
 
 
-# oid를 이용해 file을 찾아서 저장
+# oid로 파일을 읽어서 content를 return
+# 1. oid를 이용해 file을 읽음
+# 2. type을 분리 후 content를 return
 def get_object(oid, expected="blob"):
     with open(f"{GIT_DIR}/objects/{oid}", "rb") as f:
         obj = f.read()
@@ -27,6 +29,7 @@ def get_object(oid, expected="blob"):
     type_, _, content = obj.partition(b"\x00")
     type_ = type_.decode()
 
+    # file의 타입과 expected type이 다르면 error
     if expected is not None:
         assert type_ == expected, f"Expected {expected}, got {type_}"
     return content
