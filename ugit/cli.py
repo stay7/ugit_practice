@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import textwrap
 
 from . import base
 from . import data
@@ -38,6 +39,9 @@ def parse_args():
     commit_parser.set_defaults(func=commit)
     commit_parser.add_argument("-m", "--message", required=True)
 
+    log_parser = commands.add_parser("log")
+    log_parser.set_defaults(func=log)
+
     return parser.parse_args()
 
 
@@ -67,3 +71,17 @@ def read_tree(args):
 
 def commit(args):
     print(base.commit(args.message))
+
+
+# file을 이용해 구현한 linked list처럼 연결되어있는 구조
+# HEAD의 oid로부터 commit을 가져와서 출력
+# commit의 부모가 있으면 oid = commit.parent
+def log(args):
+    oid = data.get_HEAD()
+    while oid:
+        commit = base.get_commit(oid)
+        print(f"commit {oid}\n")
+        print(textwrap.indent(commit.message, "    "))
+        print("")
+
+        oid = commit.parent

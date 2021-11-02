@@ -1,5 +1,8 @@
+import itertools
+import operator
 import os
 
+from collections import namedtuple
 from . import data
 
 # 현재 버전을 object/에 tree타입으로 저장해두는 것
@@ -92,6 +95,30 @@ def commit(message):
     oid = data.hash_object(commit.encode(), "commit")
     data.set_HEAD(oid)
     return oid
+
+
+# namedtuple: key로 access할 수 있는 tuple
+Commit = namedtuple("Commit", ["tree", "parent", "message"])
+
+
+# commit 타입의 object를 읽어옴
+# 아직 iter를 하는 이유를 모르겠음
+# return -> Commit(tree='ac1e1560e365f78f11667fc83e6d4c458b771ecb', parent=None, message='Old')
+def get_commit(oid):
+    parent = None
+
+    commit = data.get_object(oid, "commit").decode()
+    lines = iter(commit.splitlines())
+    for line in itertools.takewhile(operator.truth, lines):
+        key, value = line.split(" ", 1)
+        if key == "tree":
+            tree = value
+        elif key == "parent":
+            parent = value
+        else:
+            assert False, f"Unknown field {key}"
+    message = "\n".join(lines)
+    return Commit(tree=tree, parent=parent, message=message)
 
 
 # .ugit은 user file이 아니므로 무시
