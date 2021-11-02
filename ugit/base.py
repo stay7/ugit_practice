@@ -77,6 +77,24 @@ def read_tree(tree_oid):
             f.write(data.get_object(oid))
 
 
+# commit 메시지를 작성
+# HEAD가 있으면 parent를 oid를 추가
+# HEAD를 새로 추가한 oid로 변경
+def commit(message):
+    commit = f"tree {write_tree()}\n"
+
+    HEAD = data.get_HEAD()
+    if HEAD:
+        commit += f"parent {HEAD}\n"
+
+    commit += "\n"
+    commit += f"{message}\n"
+
+    oid = data.hash_object(commit.encode(), "commit")
+    data.set_HEAD(oid)
+    return oid
+
+
 # def _empty_current_directory():
 #     for root, dirnames, filenames in os.walk('.', topdown=False):
 
