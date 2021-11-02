@@ -30,7 +30,6 @@ def _iter_tree_entries(oid):
     tree = data.get_object(oid, "tree")
     for entry in tree.decode().splitlines():
         type_, oid, name = entry.split(" ", 2)
-        print(type_, oid, name)
         yield type_, oid, name
 
 
@@ -94,9 +93,6 @@ def commit(message):
     data.set_HEAD(oid)
     return oid
 
-
-# def _empty_current_directory():
-#     for root, dirnames, filenames in os.walk('.', topdown=False):
 
 # .ugit은 user file이 아니므로 무시
 def is_ignored(path):
