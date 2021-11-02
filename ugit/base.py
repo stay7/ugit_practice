@@ -49,12 +49,36 @@ def get_tree(oid, base_path=""):
     return result
 
 
+# 현재 directory를 비운다
+def _empty_current_directory():
+    for root, dirnames, filenames in os.walk(".", topdown=False):
+        for filename in filenames:
+            path = os.path.relpath(f"{root}/{filename}")
+            if is_ignored(path) or not os.path.isfile(path):
+                continue
+            os.remove(path)
+        for dirname in dirnames:
+            path = os.path.relpath(f"{root}/{dirname}")
+            if is_ignored(path):
+                continue
+            try:
+                os.rmdir(path)
+            except (FileNotFoundError, OSError):
+                pass
+
+
+# _empty_current_directory로 현재 directory를 비우고
+# 예전 tree의 파일들을 생성한다
 def read_tree(tree_oid):
+    _empty_current_directory()
     for path, oid in get_tree(tree_oid, base_path="./").items():
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "wb") as f:
             f.write(data.get_object(oid))
 
+
+# def _empty_current_directory():
+#     for root, dirnames, filenames in os.walk('.', topdown=False):
 
 # .ugit은 user file이 아니므로 무시
 def is_ignored(path):
