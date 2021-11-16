@@ -97,6 +97,16 @@ def commit(message):
     return oid
 
 
+def checkout(oid):
+    commit = get_commit(oid)
+    read_tree(commit.tree)
+    data.set_HEAD(oid)
+
+
+def create_tag(name, oid):
+    pass
+
+
 # namedtuple: key로 access할 수 있는 tuple
 Commit = namedtuple("Commit", ["tree", "parent", "message"])
 

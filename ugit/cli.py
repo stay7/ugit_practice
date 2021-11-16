@@ -43,6 +43,15 @@ def parse_args():
     log_parser.set_defaults(func=log)
     log_parser.add_argument("oid", nargs="?")
 
+    checkout_parser = commands.add_parser("checkout")
+    checkout_parser.set_defaults(func=checkout)
+    checkout_parser.add_argument("oid")
+
+    tag_parser = commands.add_parser("tag")
+    tag_parser.set_defaults(func=tag)
+    tag_parser.add_argument("name")
+    tag_parser.add_argument("oid", nargs="?")
+
     return parser.parse_args()
 
 
@@ -72,6 +81,15 @@ def read_tree(args):
 
 def commit(args):
     print(base.commit(args.message))
+
+
+def checkout(args):
+    base.checkout(args.oid)
+
+
+def tag(args):
+    oid = args.oid or data.get_HEAD()
+    base.create_tag(args.name, oid)
 
 
 # file을 이용해 구현한 linked list처럼 연결되어있는 구조
