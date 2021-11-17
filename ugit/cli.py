@@ -88,7 +88,7 @@ def checkout(args):
 
 
 def tag(args):
-    oid = args.oid or data.get_HEAD()
+    oid = args.oid or data.get_ref("HEAD")
     base.create_tag(args.name, oid)
 
 
@@ -97,7 +97,7 @@ def tag(args):
 # commit의 부모가 있으면 oid = commit.parent
 def log(args):
     # args에 입력된 oid가 없으면 HEAD부터
-    oid = args.oid or data.get_HEAD()
+    oid = args.oid or data.get_ref("HEAD")
     while oid:
         commit = base.get_commit(oid)
         print(f"commit {oid}\n")
